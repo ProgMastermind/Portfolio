@@ -60,8 +60,9 @@ export const site: Site = {
     linkedin: "https://www.linkedin.com/in/soulglory/",
     x: "https://twitter.com/PrakashCollymo1",
     writeups: {
-      // Repo-based write-ups we can safely link.
-      rustOs: "https://github.com/ProgMastermind/Rust_OS/blob/main/docs/blog-post.md",
+      // Public write-up (preferred over repo markdown for recruiters).
+      rustOs:
+        "https://rustos.hashnode.dev/i-wrote-an-os-in-rust-to-understand-what-my-code-runs-on",
       raft:
         "https://elixir-raft.hashnode.dev/i-built-raft-consensus-from-scratch-in-elixir-here-s-what-the-paper-doesn-t-tell-you",
     },
