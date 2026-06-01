@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function HeaderNav(props: {
   name: string;
@@ -13,6 +14,7 @@ export function HeaderNav(props: {
   linkedinUrl: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -30,14 +32,29 @@ export function HeaderNav(props: {
     };
   }, [open]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur transition-shadow",
+        scrolled && "shadow-[0_1px_0_rgba(0,0,0,0.04)]"
+      )}
+    >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6 sm:px-8">
-        <a href="#top" className="font-display text-sm tracking-tight text-foreground">
+        <a
+          href="#top"
+          className="font-display text-sm tracking-tight text-foreground"
+          aria-label="Go to top"
+        >
           {props.name}
         </a>
 
-        <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
+        <nav className="hidden items-center gap-6 text-sm text-muted md:flex" aria-label="Main navigation">
           {props.nav.map((i) => (
             <a
               key={i.href}
@@ -55,7 +72,7 @@ export function HeaderNav(props: {
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background"
-            aria-label="GitHub"
+            aria-label="GitHub profile"
           >
             <FaGithub className="h-4 w-4" />
           </a>
@@ -64,15 +81,16 @@ export function HeaderNav(props: {
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background"
-            aria-label="LinkedIn"
+            aria-label="LinkedIn profile"
           >
             <FaLinkedinIn className="h-4 w-4" />
           </a>
-
+          <ThemeToggle />
           <button
             type="button"
             className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background md:hidden"
             aria-label="Open menu"
+            aria-expanded={open}
             onClick={() => setOpen(true)}
           >
             <Menu className="h-4 w-4" />
@@ -100,6 +118,9 @@ export function HeaderNav(props: {
             "absolute right-0 top-0 h-full w-[88%] max-w-sm border-l border-border bg-background p-6 transition-transform",
             open ? "translate-x-0" : "translate-x-full",
           )}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation"
         >
           <div className="flex items-center justify-between">
             <div className="font-display text-base tracking-tight">{props.name}</div>
@@ -151,4 +172,3 @@ export function HeaderNav(props: {
     </header>
   );
 }
-

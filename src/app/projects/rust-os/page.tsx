@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowUpRight, Terminal } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Badge, ButtonLink, Container, ExternalLink, SectionHeading } from "@/components/ui";
@@ -19,13 +20,13 @@ export default function RustOsCaseStudy() {
         <Container className="py-10">
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div className="space-y-3">
-              <a
+              <Link
                 href="/#projects"
                 className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to projects
-              </a>
+              </Link>
               <h1 className="font-display text-3xl tracking-tight sm:text-4xl">
                 FerrOS (Rust_OS)
               </h1>
@@ -42,7 +43,7 @@ export default function RustOsCaseStudy() {
               <ButtonLink href={repo} variant="secondary" target="_blank" rel="noreferrer">
                 Repo <ArrowUpRight className="h-4 w-4" />
               </ButtonLink>
-              <ButtonLink href="/resume.pdf" variant="secondary">
+              <ButtonLink href="https://drive.google.com/file/d/1RXspcoM-4QtNWunIYm4rP7ZLiA1qhL4R/view?usp=sharing" variant="secondary" target="_blank" rel="noreferrer">
                 Resume
               </ButtonLink>
             </div>

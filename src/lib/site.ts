@@ -16,6 +16,7 @@ export type Site = {
   location: string;
   email: string;
   phone: string;
+  metaDescription: string;
   links: {
     github: string;
     linkedin: string;
@@ -26,6 +27,11 @@ export type Site = {
     };
   };
   summary: string;
+  currently: {
+    role: string;
+    learning: string;
+    reading: string;
+  };
   skills: {
     languages: string[];
     frameworks: string[];
@@ -47,6 +53,9 @@ export type Site = {
     meta: string;
   }[];
   projects: SiteProject[];
+  blog: {
+    hashnodeUsername: string;
+  };
 };
 
 export const site: Site = {
@@ -55,6 +64,8 @@ export const site: Site = {
   location: "Bengaluru, India",
   email: "prakashcollymore@gmail.com",
   phone: "+91-9398233616",
+  metaDescription:
+    "Software Engineer — systems, backend, and full‑stack engineering. Building distributed systems, kernels, and developer tooling at Intel.",
   links: {
     github: "https://github.com/ProgMastermind",
     linkedin: "https://www.linkedin.com/in/soulglory/",
@@ -69,6 +80,11 @@ export const site: Site = {
   },
   summary:
     "Software engineer with strong systems and backend fundamentals (performance, reliability, distributed systems) and experience building the tooling and interfaces that make platforms usable. Currently a GPU Software Development Intern at Intel, focused on fast, reliable automation for graphics driver validation.",
+  currently: {
+    role: "GPU Software Development Intern at Intel",
+    learning: "Gen AI & Agentic Engineering",
+    reading: "",
+  },
   skills: {
     languages: ["Go", "Elixir", "Rust", "Java", "Python", "JavaScript"],
     frameworks: ["OTP", "Phoenix", "React", "Node.js", "Express"],
@@ -86,6 +102,7 @@ export const site: Site = {
         "Architected an IPC system with subprocess caching that accelerated tool response times by 5× (from ~1–1.2s to 0.1–0.3s per call), replacing network calls with system-level IPC and eliminating server overhead.",
         "Integrated OCR-based validation into the OpenCV–Sikuli pipeline, improving detection accuracy and removing manual threshold calibration; API adopted by multiple teams.",
         "Designed a pipe-based communication bridge for isolated subprocesses, resolving critical dependency conflicts while keeping modules independently executable.",
+        "Automated the end-to-end code generation pipeline using OmniParser and Qwen VLM, cutting manual effort from 2-3 days to half a day by replacing hand-written extraction with vision-based parsing and automated code synthesis.",
       ],
     },
   ],
@@ -103,7 +120,7 @@ export const site: Site = {
       name: "RaftEx",
       tagline: "Raft consensus from scratch in Elixir/OTP.",
       stack: ["Elixir", "OTP", "gen_statem", "TCP", "DETS"],
-      proofLine: "≈1200 LOC • 19★ • Interactive demo + tests",
+      proofLine: "19★ • Interactive demo + tests",
       links: {
         repo: "https://github.com/ProgMastermind/raft-elixir",
       },
@@ -171,4 +188,7 @@ export const site: Site = {
       ],
     },
   ],
+  blog: {
+    hashnodeUsername: "progmastermind",
+  },
 };
