@@ -11,6 +11,12 @@ const nav = [
   { label: "Contact", href: "#contact" },
 ] as const;
 
+const metricCols = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+} as const;
+
 const featuredWriting = [
   site.links.writeups.raft && {
     title: "I built Raft consensus from scratch in Elixir. Here’s what the paper doesn’t tell you.",
@@ -42,10 +48,12 @@ export default function Home() {
               <em className="text-accent">tooling</em> around them.
             </h1>
             <p className="mt-10 max-w-[60ch] text-[17px] leading-[1.7] text-muted">
-              I&rsquo;m a GPU Software Development Intern at Intel, building the
-              automation used to validate graphics drivers. Outside work I build the
-              things I want to understand properly: Raft in Elixir, a preemptive kernel
-              in Rust, and a model of Go&rsquo;s garbage collector.
+              I&rsquo;m a backend engineering intern at Bytebeam, building Rust and
+              PostgreSQL services for vehicle telemetry. Before that I optimised LLM
+              inference on AMD MI300X GPUs and built driver-validation automation at
+              Intel. Outside work I build the things I want to understand properly:
+              Raft in Elixir, a preemptive kernel in Rust, and a model of Go&rsquo;s
+              garbage collector.
             </p>
           </div>
 
@@ -53,7 +61,7 @@ export default function Home() {
             <Fact label="Now">
               {site.experience[0].company}
               <br />
-              <span className="text-muted">GPU Software</span>
+              <span className="text-muted">Backend · Rust</span>
             </Fact>
             <Fact label="Education">
               {education.school.replace("Vellore Institute of Technology", "VIT")},{" "}
@@ -82,53 +90,57 @@ export default function Home() {
           id="work"
           index="01"
           title="Work"
-          lede="Validation infrastructure for graphics drivers, where speed and repeatability both matter."
+          lede="Backend services, LLM inference performance, and validation tooling, where speed and repeatability both matter."
         >
-          {site.experience.map((e) => (
-            <article
-              key={`${e.company}-${e.role}`}
-              className="grid grid-cols-1 gap-y-6 md:grid-cols-12 md:gap-x-8"
-            >
-              <div className="md:col-span-3">
-                <div className="font-mono text-[12px] text-foreground">{e.date}</div>
-                <div className="mt-1 font-mono text-[12px] text-muted">{e.location}</div>
-              </div>
-              <div className="md:col-span-9">
-                <h3 className="font-serif text-[28px] leading-tight tracking-[-0.015em]">
-                  {e.company}
-                </h3>
-                <div className="mt-1 text-[15px] text-muted">{e.role}</div>
+          <div className="space-y-16">
+            {site.experience.map((e, i) => (
+              <article
+                key={`${e.company}-${e.role}`}
+                className={`grid grid-cols-1 gap-y-6 md:grid-cols-12 md:gap-x-8 ${i > 0 ? "border-t border-border pt-16" : ""}`}
+              >
+                <div className="md:col-span-3">
+                  <div className="font-mono text-[12px] text-foreground">{e.date}</div>
+                  <div className="mt-1 font-mono text-[12px] text-muted">{e.location}</div>
+                </div>
+                <div className="md:col-span-9">
+                  <h3 className="font-serif text-[28px] leading-tight tracking-[-0.015em]">
+                    {e.company}
+                  </h3>
+                  <div className="mt-1 text-[15px] text-muted">{e.role}</div>
 
-                {e.metrics.length > 0 ? (
-                  <dl className="mt-10 grid grid-cols-1 border-y border-border sm:grid-cols-3">
-                    {e.metrics.map((m, i) => (
-                      <div
-                        key={m.label}
-                        className={`py-6 sm:px-6 ${i === 0 ? "sm:pl-0" : "border-t border-border sm:border-t-0 sm:border-l"}`}
-                      >
-                        <dt className="sr-only">{m.label}</dt>
-                        <dd className="font-serif text-[44px] leading-none tracking-[-0.02em] text-accent tabular-nums">
-                          {m.value}
-                        </dd>
-                        <dd className="mt-3 text-[13px] leading-5 text-muted">{m.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : null}
-
-                <ul className="mt-10 max-w-[68ch] space-y-4">
-                  {e.bullets.map((b) => (
-                    <li
-                      key={b}
-                      className="relative pl-6 text-[15px] leading-7 text-foreground/85 before:absolute before:top-[0.85em] before:left-0 before:h-px before:w-3 before:bg-faint"
+                  {e.metrics.length > 0 ? (
+                    <dl
+                      className={`mt-10 grid grid-cols-1 border-y border-border ${metricCols[e.metrics.length as keyof typeof metricCols]}`}
                     >
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </article>
-          ))}
+                      {e.metrics.map((m, i) => (
+                        <div
+                          key={m.label}
+                          className={`py-6 sm:px-6 ${i === 0 ? "sm:pl-0" : "border-t border-border sm:border-t-0 sm:border-l"}`}
+                        >
+                          <dt className="sr-only">{m.label}</dt>
+                          <dd className="font-serif text-[44px] leading-none tracking-[-0.02em] text-accent tabular-nums">
+                            {m.value}
+                          </dd>
+                          <dd className="mt-3 text-[13px] leading-5 text-muted">{m.label}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
+
+                  <ul className="mt-10 max-w-[68ch] space-y-4">
+                    {e.bullets.map((b) => (
+                      <li
+                        key={b}
+                        className="relative pl-6 text-[15px] leading-7 text-foreground/85 before:absolute before:top-[0.85em] before:left-0 before:h-px before:w-3 before:bg-faint"
+                      >
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
         </Section>
 
         <Section
@@ -216,6 +228,7 @@ export default function Home() {
                 [
                   ["Languages", site.skills.languages],
                   ["Frameworks", site.skills.frameworks],
+                  ["GenAI", site.skills.genai],
                   ["Infrastructure", site.skills.infra],
                   ["Databases", site.skills.databases],
                 ] as const
