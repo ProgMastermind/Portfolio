@@ -36,11 +36,11 @@ export function Section(props: {
     <section id={props.id} className="scroll-mt-20">
       <Container className="py-16 sm:py-24">
         <header className="grid grid-cols-1 gap-y-4 border-t border-rule pt-5 md:grid-cols-12 md:gap-x-8">
-          <Eyebrow className="md:col-span-3">
-            <span className="text-accent">{props.index}</span>
-            <span className="mx-2 text-faint">/</span>
+          <h2 className="font-mono text-[11px] font-normal tracking-[0.14em] text-muted uppercase md:col-span-3">
+            <span aria-hidden className="text-accent">{props.index}</span>
+            <span aria-hidden className="mx-2 text-faint">/</span>
             {props.title}
-          </Eyebrow>
+          </h2>
           {props.lede ? (
             <p className="font-serif text-2xl leading-snug tracking-[-0.01em] text-foreground sm:text-[28px] md:col-span-9 md:max-w-[34ch]">
               {props.lede}
