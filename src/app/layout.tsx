@@ -1,30 +1,39 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { site } from "@/lib/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const serif = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+});
+
+const sans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const space = Space_Grotesk({
-  variable: "--font-space",
+const mono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
-  title: `${site.name} — Portfolio`,
+  title: `${site.name}, ${site.title}`,
   description: site.metaDescription,
   metadataBase: new URL(baseUrl),
   openGraph: {
-    title: `${site.name} — Portfolio`,
+    title: `${site.name}, ${site.title}`,
     description: site.metaDescription,
     type: "website",
     url: baseUrl,
@@ -33,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Portfolio`,
+    title: `${site.name}, ${site.title}`,
     description: site.metaDescription,
     creator: site.links.x ? site.links.x.split("/").pop() : undefined,
   },
@@ -80,7 +89,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${space.variable} h-full antialiased`}
+      className={`${serif.variable} ${sans.variable} ${mono.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -107,10 +116,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="font-sans">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-accent-foreground focus:text-sm focus:font-medium"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-foreground focus:text-sm"
         >
           Skip to content
         </a>
