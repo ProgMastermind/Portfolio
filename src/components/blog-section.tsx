@@ -3,98 +3,85 @@
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type HashnodePost = {
+export type Post = {
   title: string;
-  brief: string;
   url: string;
-  dateAdded: string;
-  coverImage?: string;
+  date?: string;
 };
 
-export function BlogSection({ username }: { username: string }) {
-  const [posts, setPosts] = useState<HashnodePost[]>([]);
-  const [loading, setLoading] = useState(true);
+function host(url: string) {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
+export function BlogSection(props: { username: string; featured: Post[] }) {
+  const [posts, setPosts] = useState<Post[]>(props.featured);
 
   useEffect(() => {
     let cancelled = false;
+    const query = `{ publication(host: "${props.username}.hashnode.dev") { posts(first: 5) { edges { node { title url publishedAt } } } } }`;
 
-    async function fetchPosts() {
-      try {
-        const query = `{ publication(host: "${username}.hashnode.dev") { posts(first: 3) { edges { node { title brief url dateAdded coverImage { url } } } } } }`;
-        const res = await fetch("https://gql.hashnode.com/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query }),
-        });
+    fetch("https://gql.hashnode.com/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        const edges: { node: { title: string; url: string; publishedAt: string } }[] =
+          json?.data?.publication?.posts?.edges ?? [];
+        if (cancelled || edges.length === 0) return;
+        const latest = edges.map((e) => ({
+          title: e.node.title,
+          url: e.node.url,
+          date: e.node.publishedAt,
+        }));
+        setPosts((prev) => [
+          ...prev,
+          ...latest.filter((p) => !prev.some((f) => f.url === p.url)),
+        ]);
+      })
+      .catch(() => {});
 
-        if (!res.ok) {
-          if (!cancelled) setLoading(false);
-          return;
-        }
-
-        const json = await res.json();
-        const edges = json.data?.publication?.posts?.edges ?? [];
-        if (!cancelled) {
-          setPosts(edges.map((e: { node: HashnodePost }) => e.node));
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchPosts();
     return () => {
       cancelled = true;
     };
-  }, [username]);
-
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="rounded-[var(--radius-lg)] border border-border bg-surface p-5 animate-pulse"
-          >
-            <div className="h-5 w-3/4 bg-border rounded" />
-            <div className="mt-2 h-4 w-full bg-border rounded" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (posts.length === 0) return null;
+  }, [props.username]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <ol className="border-t border-border">
       {posts.map((post) => (
-        <a
-          key={post.url}
-          href={post.url}
-          target="_blank"
-          rel="noreferrer"
-          className="group rounded-[var(--radius-lg)] border border-border bg-surface p-5 transition-colors hover:border-accent"
-        >
-          <h4 className="font-display text-sm tracking-tight text-foreground line-clamp-2">
-            {post.title}
-          </h4>
-          <p className="mt-2 text-xs leading-5 text-muted line-clamp-2">
-            {post.brief}
-          </p>
-          <div className="mt-3 flex items-center justify-between">
-            <time className="text-xs text-muted/70">
-              {new Date(post.dateAdded).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </time>
-            <ArrowUpRight className="h-3.5 w-3.5 text-muted transition-colors group-hover:text-accent" />
-          </div>
-        </a>
+        <li key={post.url} className="border-b border-border">
+          <a
+            href={post.url}
+            target="_blank"
+            rel="noreferrer"
+            className="group grid grid-cols-1 gap-y-2 py-6 md:grid-cols-12 md:items-baseline md:gap-x-8"
+          >
+            <span className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase md:col-span-3">
+              {post.date ? formatDate(post.date) : host(post.url)}
+            </span>
+            <span className="font-serif text-xl leading-snug tracking-[-0.01em] text-foreground transition-colors group-hover:text-accent sm:text-2xl md:col-span-8">
+              {post.title}
+            </span>
+            <ArrowUpRight
+              aria-hidden
+              strokeWidth={1.5}
+              className="hidden h-5 w-5 justify-self-end text-faint transition-colors group-hover:text-accent md:col-span-1 md:block"
+            />
+          </a>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }

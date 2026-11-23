@@ -1,8 +1,11 @@
 "use client";
 
-import { Check, Loader2, Send } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { cn } from "@/lib/cn";
+
+const fieldClass =
+  "mt-2 block w-full border-0 border-b border-border bg-transparent px-0 py-2.5 text-[15px] text-foreground placeholder:text-faint focus:border-foreground focus:ring-0 focus:outline-none focus-visible:outline-none transition-colors";
+
+const labelClass = "font-mono text-[11px] tracking-[0.14em] text-muted uppercase";
 
 export function ContactForm() {
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -35,16 +38,13 @@ export function ContactForm() {
 
   if (state === "sent") {
     return (
-      <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-6 text-center">
-        <Check className="mx-auto h-8 w-8 text-accent" />
-        <p className="mt-3 font-medium text-foreground">Message sent!</p>
-        <p className="mt-1 text-sm text-muted">
-          Thanks for reaching out. I&rsquo;ll get back to you soon.
-        </p>
+      <div className="border-t border-rule pt-6">
+        <p className="font-serif text-2xl text-foreground">Thank you. Your message is on its way.</p>
+        <p className="mt-2 text-[15px] text-muted">I usually reply within a couple of days.</p>
         <button
           type="button"
           onClick={() => setState("idle")}
-          className="mt-4 text-sm text-accent hover:underline"
+          className="link mt-6 text-[15px]"
         >
           Send another message
         </button>
@@ -53,86 +53,66 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div>
-        <label htmlFor="cf-name" className="block text-sm font-medium text-foreground">
-          Name
-        </label>
-        <input
-          id="cf-name"
-          type="text"
-          required
-          value={form.name}
-          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-          className={cn(
-            "mt-1 block w-full rounded-[var(--radius-md)] border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted/60",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-          )}
-          placeholder="Your name"
-        />
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+        <div>
+          <label htmlFor="cf-name" className={labelClass}>
+            Name
+          </label>
+          <input
+            id="cf-name"
+            type="text"
+            required
+            autoComplete="name"
+            value={form.name}
+            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            className={fieldClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="cf-email" className={labelClass}>
+            Email
+          </label>
+          <input
+            id="cf-email"
+            type="email"
+            required
+            autoComplete="email"
+            value={form.email}
+            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            className={fieldClass}
+          />
+        </div>
       </div>
       <div>
-        <label htmlFor="cf-email" className="block text-sm font-medium text-foreground">
-          Email
-        </label>
-        <input
-          id="cf-email"
-          type="email"
-          required
-          value={form.email}
-          onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-          className={cn(
-            "mt-1 block w-full rounded-[var(--radius-md)] border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted/60",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-          )}
-          placeholder="you@example.com"
-        />
-      </div>
-      <div>
-        <label htmlFor="cf-message" className="block text-sm font-medium text-foreground">
+        <label htmlFor="cf-message" className={labelClass}>
           Message
         </label>
         <textarea
           id="cf-message"
           required
-          rows={4}
+          rows={5}
           value={form.message}
           onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-          className={cn(
-            "mt-1 block w-full rounded-[var(--radius-md)] border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted/60 resize-y",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-          )}
-          placeholder="Tell me about your opportunity..."
+          className={`${fieldClass} resize-y`}
+          placeholder="The role, the team, and what you are working on."
         />
       </div>
 
-      {state === "error" && (
-        <p className="text-sm text-red-500">
-          Something went wrong. Please try again or email directly.
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={state === "sending"}
-        className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors",
-          "hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
-          "disabled:opacity-50 disabled:cursor-not-allowed"
-        )}
-      >
-        {state === "sending" ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Sending...
-          </>
-        ) : (
-          <>
-            <Send className="h-4 w-4" />
-            Send message
-          </>
-        )}
-      </button>
+      <div className="flex flex-wrap items-center gap-6">
+        <button
+          type="submit"
+          disabled={state === "sending"}
+          className="bg-foreground px-6 py-3 text-[14px] font-medium text-background transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {state === "sending" ? "Sending…" : "Send message"}
+        </button>
+        {state === "error" ? (
+          <p className="text-[14px] text-accent" role="alert">
+            That didn&rsquo;t go through. Please email me directly instead.
+          </p>
+        ) : null}
+      </div>
     </form>
   );
 }

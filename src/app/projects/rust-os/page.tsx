@@ -1,151 +1,188 @@
-import { ArrowLeft, ArrowUpRight, Terminal } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
-import { Badge, ButtonLink, Container, ExternalLink, SectionHeading } from "@/components/ui";
+import { HeaderNav } from "@/components/header-nav";
+import { Container, Eyebrow, Section, TextLink } from "@/components/ui";
 import { site } from "@/lib/site";
 
-export const metadata = {
-  title: "FerrOS (Rust_OS) — Case Study",
+export const metadata: Metadata = {
+  title: `FerrOS, a preemptive x86_64 kernel in Rust · ${site.name}`,
   description:
     "How FerrOS boots from BIOS to an interactive shell, including interrupts, paging, allocators, scheduling, syscalls, and a ramdisk filesystem.",
 };
 
-export default function RustOsCaseStudy() {
-  const repo = "https://github.com/ProgMastermind/Rust_OS";
+const nav = [
+  { label: "Work", href: "/#work" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Writing", href: "/#writing" },
+  { label: "Contact", href: "/#contact" },
+] as const;
 
+const repo = "https://github.com/ProgMastermind/Rust_OS";
+
+const overview = [
+  "BIOS boot into 64-bit Long Mode, then jump into kernel_main.",
+  "VGA text output and serial debugging (UART 0x3F8).",
+  "CPU exceptions and hardware interrupts (PIC timer and PS/2 keyboard).",
+  "4-level page tables and bitmap physical frame allocator.",
+  "Multiple heap allocators (bump, free-list with coalescing, fixed-size block).",
+  "Preemptive round-robin scheduler with context switching in naked asm.",
+  "Syscall interface via int 0x80 with pointer validation and errno-style results.",
+  "In-memory ramdisk filesystem and per-process FD tables and blocking stdin I/O.",
+  "Shell with built-in commands (help/echo/ls/cat/pid/uptime/clear/exit).",
+];
+
+const subsystems = [
+  ["Boot and init", "GDT/TSS, IDT, PIC initialisation, enabling interrupts, process table setup."],
+  ["Memory", "Page table init, global mapper, frame allocator, heap mapping and allocators."],
+  [
+    "Scheduling",
+    "The timer interrupt drives a preemptive round-robin scheduler and context switch.",
+  ],
+  [
+    "Syscalls and FS",
+    "int 0x80 dispatch, read/write/open/close, ramdisk VFS, per-process FD table.",
+  ],
+] as const;
+
+const choices = [
+  "Guard pages around process stacks to detect stack overflow reliably.",
+  "Blocked process states with wakeup from ISR (keyboard interrupt wakes stdin readers).",
+  "Allocator progression: educational allocators → fixed-size allocator for O(1) allocation.",
+  "Kernel tests that boot in QEMU and report over serial (integration-level confidence).",
+];
+
+function Offset(props: { children: React.ReactNode }) {
   return (
-    <div className="min-h-full bg-background">
-      <header className="border-b border-border">
-        <Container className="py-10">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="space-y-3">
-              <Link
-                href="/#projects"
-                className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to projects
-              </Link>
-              <h1 className="font-display text-3xl tracking-tight sm:text-4xl">
-                FerrOS (Rust_OS)
-              </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted">
-                A minimal <span className="text-foreground">x86_64</span> kernel written in{" "}
-                <span className="text-foreground">Rust</span> that boots to an interactive
-                shell in QEMU. Built to understand the real boot-to-shell stack: interrupts,
-                paging, allocation, preemptive scheduling, syscalls, and a small in-memory
-                filesystem.
-              </p>
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-12 md:gap-x-8">
+      <div className="md:col-span-9 md:col-start-4">{props.children}</div>
+    </div>
+  );
+}
 
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href={repo} variant="secondary" target="_blank" rel="noreferrer">
-                Repo <ArrowUpRight className="h-4 w-4" />
-              </ButtonLink>
-              <ButtonLink href="https://drive.google.com/file/d/1RXspcoM-4QtNWunIYm4rP7ZLiA1qhL4R/view?usp=sharing" variant="secondary" target="_blank" rel="noreferrer">
-                Resume
-              </ButtonLink>
-            </div>
+const bulletClass =
+  "relative pl-6 text-[15px] leading-7 text-foreground/85 before:absolute before:top-[0.85em] before:left-0 before:h-px before:w-3 before:bg-faint";
+
+export default function RustOsCaseStudy() {
+  return (
+    <div id="top">
+      <HeaderNav name={site.name} nav={nav} />
+
+      <main id="main-content">
+        <Container className="pt-16 pb-12 sm:pt-24">
+          <Link
+            href="/#projects"
+            className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.75} />
+            All projects
+          </Link>
+          <div className="rise mt-10">
+            <Eyebrow>Case study · Operating systems</Eyebrow>
+            <h1 className="mt-6 font-serif text-[48px] leading-[1.02] tracking-[-0.025em] sm:text-[72px]">
+              FerrOS
+            </h1>
+            <p className="mt-6 max-w-[58ch] text-[18px] leading-[1.65] text-muted">
+              A minimal x86_64 kernel written in Rust that boots to an interactive shell in QEMU. I
+              built it to understand the real boot-to-shell path: interrupts, paging, allocation,
+              preemptive scheduling, syscalls, and a small in-memory filesystem.
+            </p>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-2">
-            {["Rust", "no_std", "x86_64", "Paging", "Preemptive Scheduling", "Syscalls"].map(
-              (t) => (
-                <Badge key={t} className="bg-background">
-                  {t}
-                </Badge>
-              ),
-            )}
-          </div>
+          <dl className="mt-16 grid grid-cols-2 gap-8 border-t border-border pt-6 md:grid-cols-4">
+            {(
+              [
+                ["Language", "Rust, no_std"],
+                ["Target", "x86_64, QEMU"],
+                ["Tests", "23 QEMU integration tests"],
+                ["Links", null],
+              ] as const
+            ).map(([k, v]) => (
+              <div key={k}>
+                <dt className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
+                  {k}
+                </dt>
+                <dd className="mt-3 text-[15px] leading-6">
+                  {v ?? (
+                    <span className="flex flex-col items-start gap-1">
+                      <TextLink href={repo} arrow>
+                        Source
+                      </TextLink>
+                      {site.links.writeups.rustOs ? (
+                        <TextLink href={site.links.writeups.rustOs} arrow>
+                          Write-up
+                        </TextLink>
+                      ) : null}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </Container>
-      </header>
 
-      <main>
-        <Container className="py-14 sm:py-16">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
-            <div className="space-y-12">
-              <section>
-                <SectionHeading
-                  eyebrow="Overview"
-                  title="What it does"
-                  description="A real bootable kernel (not a toy userspace program) that runs in Ring 0 and boots to a shell prompt."
-                />
-                <ul className="mt-6 space-y-2 text-sm leading-6 text-muted">
-                  {[
-                    "BIOS boot into 64-bit Long Mode, then jump into kernel_main.",
-                    "VGA text output + serial debugging (UART 0x3F8).",
-                    "CPU exceptions + hardware interrupts (PIC timer + PS/2 keyboard).",
-                    "4-level page tables + bitmap physical frame allocator.",
-                    "Multiple heap allocators (bump, free-list w/ coalescing, fixed-size block).",
-                    "Preemptive round-robin scheduler with context switching in naked asm.",
-                    "Syscall interface via int 0x80 with pointer validation + errno-style results.",
-                    "In-memory ramdisk filesystem + per-process FD tables + blocking stdin I/O.",
-                    "Shell with built-in commands (help/echo/ls/cat/pid/uptime/clear/exit).",
-                  ].map((x) => (
-                    <li key={x} className="flex gap-3">
-                      <span className="mt-[0.55rem] h-1 w-1 shrink-0 rounded-full bg-accent" />
-                      <span>{x}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+        <Section
+          id="overview"
+          index="01"
+          title="Overview"
+          lede="A real bootable kernel that runs in ring 0, not a userspace simulation."
+        >
+          <Offset>
+            <ul className="max-w-[68ch] space-y-3">
+              {overview.map((x) => (
+                <li key={x} className={bulletClass}>
+                  {x}
+                </li>
+              ))}
+            </ul>
+          </Offset>
+        </Section>
 
-              <section>
-                <SectionHeading
-                  eyebrow="Architecture"
-                  title="Subsystem map"
-                  description="Organized as a small kernel with clear module boundaries—each layer is implemented from scratch, not stubbed."
-                />
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <InfoBox title="Boot + Init">
-                    GDT/TSS, IDT, PIC init, interrupts enable, process table setup.
-                  </InfoBox>
-                  <InfoBox title="Memory">
-                    Page table init, global mapper, frame allocator, heap mapping + allocators.
-                  </InfoBox>
-                  <InfoBox title="Scheduling">
-                    Timer interrupt drives a preemptive round-robin scheduler + context switch.
-                  </InfoBox>
-                  <InfoBox title="Syscalls + FS">
-                    int 0x80 dispatch, read/write/open/close, ramdisk VFS, per-process FD table.
-                  </InfoBox>
+        <Section
+          id="architecture"
+          index="02"
+          title="Architecture"
+          lede="A small kernel with clear module boundaries. Every layer is implemented, not stubbed."
+        >
+          <Offset>
+            <dl className="divide-y divide-border border-y border-border">
+              {subsystems.map(([k, v]) => (
+                <div key={k} className="grid grid-cols-1 gap-1 py-5 sm:grid-cols-[200px_1fr]">
+                  <dt className="font-serif text-[20px] tracking-[-0.01em]">{k}</dt>
+                  <dd className="text-[15px] leading-7 text-muted">{v}</dd>
                 </div>
-              </section>
+              ))}
+            </dl>
+          </Offset>
+        </Section>
 
-              <section>
-                <SectionHeading
-                  eyebrow="Engineering choices"
-                  title="Details that make it real"
-                  description="The goal was correctness and clarity, not just “it boots.”"
-                />
-                <ul className="mt-6 space-y-2 text-sm leading-6 text-muted">
-                  {[
-                    "Guard pages around process stacks to detect stack overflow reliably.",
-                    "Blocked process states w/ wakeup from ISR (keyboard interrupt wakes stdin readers).",
-                    "Allocator progression: educational allocators → fixed-size allocator for O(1) allocation.",
-                    "Kernel tests that boot in QEMU and report over serial (integration-level confidence).",
-                  ].map((x) => (
-                    <li key={x} className="flex gap-3">
-                      <span className="mt-[0.55rem] h-1 w-1 shrink-0 rounded-full bg-accent" />
-                      <span>{x}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
+        <Section
+          id="choices"
+          index="03"
+          title="Engineering choices"
+          lede="The goal was correctness and clarity, not only getting it to boot."
+        >
+          <Offset>
+            <ul className="max-w-[68ch] space-y-3">
+              {choices.map((x) => (
+                <li key={x} className={bulletClass}>
+                  {x}
+                </li>
+              ))}
+            </ul>
+          </Offset>
+        </Section>
 
-            <aside className="space-y-6">
-              <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-6">
-                <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-accent" />
-                  <div className="text-sm font-medium text-foreground">
-                    How to run (QEMU)
-                  </div>
-                </div>
-                <div className="mt-4 rounded-[var(--radius-md)] border border-border bg-background p-4">
-                  <pre className="overflow-x-auto text-xs leading-5 text-foreground">
-{`# Requirements: Rust nightly + QEMU + bootimage
+        <Section
+          id="run"
+          index="04"
+          title="Run it"
+          lede="Requires Rust nightly, QEMU, and bootimage."
+        >
+          <Offset>
+            <pre className="overflow-x-auto border-y border-border bg-surface px-6 py-6 font-mono text-[13px] leading-6 text-foreground">
+              {`# Requirements: Rust nightly and QEMU and bootimage
 rustup default nightly
 rustup component add rust-src llvm-tools
 cargo install bootimage
@@ -155,50 +192,21 @@ cargo run
 
 # Run the integration tests (headless, via serial)
 cargo test`}
-                  </pre>
-                </div>
-                <p className="mt-4 text-sm text-muted">
-                  Repo: <ExternalLink href={repo}>{repo}</ExternalLink>
-                </p>
-              </div>
-
-              <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-6">
-                <div className="text-xs font-medium tracking-[0.18em] text-muted uppercase">
-                  Why it matters for Systems SWE
-                </div>
-                <p className="mt-3 text-sm leading-6 text-muted">
-                  This project demonstrates systems fundamentals end-to-end: CPU/interrupt
-                  model, memory translation, allocation strategies, concurrency primitives,
-                  safe syscall boundaries, and testability at the integration level.
-                </p>
-              </div>
-
-              <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-6">
-                <div className="text-xs font-medium tracking-[0.18em] text-muted uppercase">
-                  Write-up
-                </div>
-                <p className="mt-3 text-sm text-muted">
-                  Read the full build notes and design decisions:
-                </p>
-                <div className="mt-3">
-                  <ExternalLink href={site.links.writeups.rustOs ?? repo}>
-                    docs/blog-post.md <ArrowUpRight className="inline-block h-4 w-4" />
-                  </ExternalLink>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </Container>
+            </pre>
+          </Offset>
+        </Section>
       </main>
-    </div>
-  );
-}
 
-function InfoBox(props: { title: string; children: ReactNode }) {
-  return (
-    <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-      <div className="text-sm font-medium text-foreground">{props.title}</div>
-      <div className="mt-2 text-sm leading-6 text-muted">{props.children}</div>
+      <footer>
+        <Container className="flex flex-col gap-3 border-t border-border py-8 font-mono text-[11px] tracking-[0.08em] text-muted sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            © {new Date().getFullYear()} {site.name}
+          </span>
+          <Link href="/" className="transition-colors hover:text-foreground">
+            Back to home
+          </Link>
+        </Container>
+      </footer>
     </div>
   );
 }

@@ -1,20 +1,16 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 
-import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { cn } from "@/lib/cn";
 
 export function HeaderNav(props: {
   name: string;
   nav: readonly { label: string; href: string }[];
-  githubUrl: string;
-  linkedinUrl: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -25,150 +21,69 @@ export function HeaderNav(props: {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur transition-shadow",
-        scrolled && "shadow-[0_1px_0_rgba(0,0,0,0.04)]"
-      )}
-    >
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6 sm:px-8">
-        <a
-          href="#top"
-          className="font-display text-sm tracking-tight text-foreground"
-          aria-label="Go to top"
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-[2px]">
+      <div className="mx-auto flex h-14 w-full max-w-[1120px] items-center justify-between px-6 sm:px-10">
+        <Link
+          href="/"
+          className="font-serif text-[17px] tracking-[-0.01em] text-foreground"
         >
           {props.name}
-        </a>
+        </Link>
 
-        <nav className="hidden items-center gap-6 text-sm text-muted md:flex" aria-label="Main navigation">
+        <nav
+          className="hidden items-center gap-8 font-mono text-[11px] tracking-[0.14em] uppercase md:flex"
+          aria-label="Main navigation"
+        >
           {props.nav.map((i) => (
-            <a
+            <Link
               key={i.href}
               href={i.href}
-              className="transition-colors hover:text-foreground"
+              className="text-muted transition-colors hover:text-foreground"
             >
               {i.label}
-            </a>
+            </Link>
           ))}
+          <span aria-hidden className="h-3 w-px bg-border" />
+          <ThemeToggle />
         </nav>
 
-        <div className="flex items-center gap-2">
-          <a
-            href={props.githubUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background"
-            aria-label="GitHub profile"
-          >
-            <FaGithub className="h-4 w-4" />
-          </a>
-          <a
-            href={props.linkedinUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background"
-            aria-label="LinkedIn profile"
-          >
-            <FaLinkedinIn className="h-4 w-4" />
-          </a>
+        <div className="flex items-center gap-5 md:hidden">
           <ThemeToggle />
           <button
             type="button"
-            className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:bg-background md:hidden"
-            aria-label="Open menu"
+            className="font-mono text-[11px] tracking-[0.14em] text-foreground uppercase"
             aria-expanded={open}
-            onClick={() => setOpen(true)}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((v) => !v)}
           >
-            <Menu className="h-4 w-4" />
+            {open ? "Close" : "Menu"}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <div
+      <nav
+        id="mobile-nav"
+        aria-label="Mobile navigation"
         className={cn(
-          "fixed inset-0 z-[60] md:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none",
+          "border-t border-border bg-background md:hidden",
+          open ? "block" : "hidden",
         )}
-        aria-hidden={!open}
       >
-        <div
-          className={cn(
-            "absolute inset-0 bg-black/20 transition-opacity",
-            open ? "opacity-100" : "opacity-0",
-          )}
-          onClick={() => setOpen(false)}
-        />
-        <div
-          className={cn(
-            "absolute right-0 top-0 h-full w-[88%] max-w-sm border-l border-border bg-background p-6 transition-transform",
-            open ? "translate-x-0" : "translate-x-full",
-          )}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation"
-        >
-          <div className="flex items-center justify-between">
-            <div className="font-display text-base tracking-tight">{props.name}</div>
-            <button
-              type="button"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-foreground"
-              aria-label="Close menu"
-              onClick={() => setOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="mt-6 flex flex-col gap-1">
-            {props.nav.map((i) => (
-              <a
-                key={i.href}
+        <ul className="mx-auto max-w-[1120px] px-6 py-2 sm:px-10">
+          {props.nav.map((i) => (
+            <li key={i.href} className="border-b border-border last:border-b-0">
+              <Link
                 href={i.href}
                 onClick={() => setOpen(false)}
-                className="rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium text-foreground hover:bg-surface"
+                className="block py-3 font-serif text-xl text-foreground"
               >
                 {i.label}
-              </a>
-            ))}
-          </div>
-
-          <div className="mt-8 grid grid-cols-2 gap-3">
-            <a
-              href={props.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground"
-            >
-              <FaGithub className="h-4 w-4" />
-              GitHub
-            </a>
-            <a
-              href={props.linkedinUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground"
-            >
-              <FaLinkedinIn className="h-4 w-4" />
-              LinkedIn
-            </a>
-          </div>
-        </div>
-      </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }
