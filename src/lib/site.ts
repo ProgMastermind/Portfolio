@@ -39,6 +39,7 @@ export type Site = {
     languages: string[];
     frameworks: string[];
     genai: string[];
+    gpu: string[];
     infra: string[];
     databases: string[];
   };
@@ -57,6 +58,7 @@ export type Site = {
     location: string;
     meta: string;
   }[];
+  certifications: string[];
   projects: SiteProject[];
   blog: {
     hashnodeUsername: string;
@@ -71,7 +73,7 @@ export const site: Site = {
   phone: "+91-9398233616",
   resumeUrl: "/resume.pdf",
   metaDescription:
-    "Software engineer working on systems and backends: Rust telemetry services at Bytebeam, LLM inference optimisation on AMD GPUs, and GPU driver validation tooling at Intel.",
+    "Software engineer at Bytebeam building Rust backends, with prior work on LLM inference performance on AMD GPUs and GPU driver validation tooling at Intel.",
   links: {
     github: "https://github.com/ProgMastermind",
     linkedin: "https://www.linkedin.com/in/soulglory/",
@@ -85,9 +87,9 @@ export const site: Site = {
     },
   },
   summary:
-    "Systems-focused software engineer working across backend services, LLM inference performance, and validation tooling. Currently a Backend Engineer Intern at Bytebeam, building Rust and PostgreSQL services for vehicle telemetry; previously at Intel and a stealth AI startup.",
+    "Systems-focused software engineer working across backend services, LLM inference performance, and validation tooling. Currently an SDE-1 at Bytebeam, building a product backend from scratch in Rust and PostgreSQL; previously at Intel and a stealth AI startup.",
   currently: {
-    role: "Backend Engineer Intern at Bytebeam",
+    role: "Software Engineer (SDE-1) at Bytebeam",
     learning: "Gen AI & Agentic Engineering",
     reading: "",
   },
@@ -95,18 +97,20 @@ export const site: Site = {
     languages: ["Go", "Elixir", "Rust", "Java", "Python", "JavaScript"],
     frameworks: ["OTP", "Phoenix", "React", "Node.js", "Express"],
     genai: ["LangChain", "LangGraph", "RAG", "Vector databases"],
+    gpu: ["Triton", "AMD ROCm", "Speculative decoding"],
     infra: ["Linux", "Docker", "Kubernetes", "OpenCV", "Git"],
     databases: ["PostgreSQL", "Redis", "MongoDB", "MySQL"],
   },
   experience: [
     {
       company: "Bytebeam",
-      role: "Backend Engineer Intern",
+      role: "Software Engineer (SDE-1)",
       date: "Aug 2026 — Present",
       location: "Bengaluru, India",
       metrics: [],
       bullets: [
-        "Designing and building backend services for a telematics platform in Rust and PostgreSQL, focused on data ingestion and storage architecture for vehicle telemetry.",
+        "Building a telematics product backend from scratch in Rust and PostgreSQL, focused on data ingestion and storage architecture for vehicle telemetry.",
+        "Joined as a backend engineering intern in August 2026; promoted to SDE-1 in November 2026.",
       ],
     },
     {
@@ -152,6 +156,13 @@ export const site: Site = {
       meta: "GPA: 9.47 / 10.0",
     },
   ],
+  certifications: [
+    "Ultimate Go",
+    "Ultimate Go: Advanced Engineering 2.0",
+    "Ultimate Go: Software Design with Kubernetes",
+    "Intensive Kubernetes",
+    "Elixir",
+  ],
   projects: [
     {
       name: "RaftEx",
@@ -174,14 +185,14 @@ export const site: Site = {
       domain: "Storage & networking",
       tagline: "Redis-compatible in-memory cache with replication and RESP.",
       stack: ["Elixir", "OTP", "ETS", "RESP", "Replication"],
-      proofLine: "15 stars · 20+ Redis commands · replication",
+      proofLine: "15 stars · 20,000+ concurrent connections · replication",
       links: {
         repo: "https://github.com/ProgMastermind/ElixirCache",
       },
       highlights: [
         "Redis protocol compatibility across 20+ commands: transactions, pub/sub, streams, lists, sorted sets, TTL, and BLPOP disconnection handling.",
         "Master–replica replication with Redis-compatible PSYNC-style synchronization and command buffering.",
-        "Built for high concurrency with fault-isolated processes and automated recovery workflows, with tests and demos.",
+        "Held up at 20,000+ concurrent connections, with fault-isolated processes and automated recovery; includes tests and demos.",
       ],
     },
     {

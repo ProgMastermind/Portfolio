@@ -48,8 +48,8 @@ export default function Home() {
               <em className="text-accent">tooling</em> around them.
             </h1>
             <p className="mt-10 max-w-[60ch] text-[17px] leading-[1.7] text-muted">
-              I&rsquo;m a backend engineering intern at Bytebeam, building Rust and
-              PostgreSQL services for vehicle telemetry. Before that I optimised LLM
+              I&rsquo;m a software engineer at Bytebeam, building a product backend from
+              scratch in Rust and PostgreSQL. Before that I optimised LLM
               inference on AMD MI300X GPUs and built driver-validation automation at
               Intel. Outside work I build the things I want to understand properly:
               Raft in Elixir, a preemptive kernel in Rust, and a model of Go&rsquo;s
@@ -61,7 +61,7 @@ export default function Home() {
             <Fact label="Now">
               {site.experience[0].company}
               <br />
-              <span className="text-muted">Backend · Rust</span>
+              <span className="text-muted">SDE-1 · Rust</span>
             </Fact>
             <Fact label="Education">
               {education.school.replace("Vellore Institute of Technology", "VIT")},{" "}
@@ -229,6 +229,7 @@ export default function Home() {
                   ["Languages", site.skills.languages],
                   ["Frameworks", site.skills.frameworks],
                   ["GenAI", site.skills.genai],
+                  ["GPU & inference", site.skills.gpu],
                   ["Infrastructure", site.skills.infra],
                   ["Databases", site.skills.databases],
                 ] as const
@@ -263,6 +264,18 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+            </div>
+            <div className="md:col-span-3">
+              <Eyebrow>Certifications</Eyebrow>
+            </div>
+            <div className="md:col-span-9">
+              <ul className="divide-y divide-border border-y border-border">
+                {site.certifications.map((certification) => (
+                  <li key={certification} className="py-3 text-[15px] text-foreground">
+                    {certification}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </Section>
