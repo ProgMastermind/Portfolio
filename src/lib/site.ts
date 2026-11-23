@@ -68,7 +68,7 @@ export const site: Site = {
   location: "Bengaluru, India",
   email: "prakashcollymore@gmail.com",
   phone: "+91-9398233616",
-  resumeUrl: "/resume.pdf",
+  resumeUrl: "https://drive.google.com/file/d/1RXspcoM-4QtNWunIYm4rP7ZLiA1qhL4R/view?usp=sharing",
   metaDescription:
     "Software engineer working on systems and backend software: distributed consensus, kernels, runtimes, and validation tooling for GPU drivers at Intel.",
   links: {
